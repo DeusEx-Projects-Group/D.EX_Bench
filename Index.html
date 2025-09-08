@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Deus Ex Bench</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0f1214;
+      --bg-soft: #14191b;
+      --panel: rgba(18,22,24,0.88);
+      --panel-2: rgba(24,30,33,0.88);
+      --text: #e9f2f0;
+      --muted: #a8b7b3;
+      --accent: #7f8f6b;
+      --line: rgba(130,180,170,0.45);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg) url('./assets/dx-camo-bg.png') center/600px repeat;
+      color: var(--text);
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    /* EULA Modal — always display: flex by default */
+    #eulaBackdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #eulaModal {
+      background: var(--panel-2);
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 400px;
+      text-align: center;
+    }
+    #eulaModal h2 { margin-top: 0; }
+    #eulaModal button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #0d1513;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 28px;
+      background: linear-gradient(180deg, rgba(12,16,18,0.95), rgba(12,16,18,0.85));
+      border-bottom: 2px solid var(--line);
+      z-index: 10;
+    }
+    .header img.logo {
+      height: 100px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .header .title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 36px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header .subtitle {
+      font-size: 18px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Main/Card/Grid */
+    .main {
+      max-width: 1100px;
+      margin: 40px auto 100px;
+      padding: 0 16px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 14px;
+    }
+    .span2 { grid-column: span 2; }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-soft);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #0d1513;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.alt {
+      background: var(--bg-soft);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge {
+      padding: 2px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+
+    /* Output pane */
+    .output {
+      background: var(--panel-2);
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 140px;
+      max-height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.35;
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: linear-gradient(0deg, rgba(12,16,18,0.95), rgba(12,16,18,0.85));
+      border-top: 2px solid var(--line);
+      font-size: 18px;
+      color: var(--muted);
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-left: 8px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <!-- your adapter definitions -->
+  <script defer src="./adapters.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const $ = s => document.querySelector(s);
+
+      // EULA modal elements
+      const backdrop   = $('#eulaBackdrop');
+      const acceptBtn  = $('#acceptEula');
+      const runBtn     = $('#run');
+
+      // If already accepted, hide modal; else keep it visible
+      if (localStorage.getItem('dex:eulaAccepted') === 'yes') {
+        backdrop.style.display = 'none';
+        runBtn.disabled = false;
+      } else {
+        backdrop.style.display = 'flex';
+        runBtn.disabled = true;
+      }
+
+      acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('dex:eulaAccepted', 'yes');
+        backdrop.style.display = 'none';
+        runBtn.disabled = false;
+      });
+
+      // SHA-256 helper
+      async function sha256Hex(str) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      // Grab all UI elements
+      const providerSel = $('#provider');
+      const presetSel   = $('#preset');
+      const baseUrl     = $('#baseUrl');
+      const route       = $('#route');
+      const apiKey      = $('#apiKey');
+      const model       = $('#model');
+      const sysPrompt   = $('#sysPrompt');
+      const userPrompt  = $('#userPrompt');
+      const stream      = $('#stream');
+      const out         = $('#output');
+      const ttftEl      = $('#ttft');
+      const tokEl       = $('#tok');
+      const tpsEl       = $('#tps');
+      const totalEl     = $('#total');
+      const pingBtn     = $('#ping');
+      const pingEl      = $('#pingMs');
+
+      // Populate presets on change & on load
+      function populatePresets() {
+        presetSel.innerHTML = '';
+        const provs = window.Bench && Bench.providers;
+        if (!provs) {
+          console.error('Bench.providers is missing');
+          return;
+        }
+        const list = provs[providerSel.value]?.presets || [];
+        for (const p of list) {
+          const opt = document.createElement('option');
+          opt.value = JSON.stringify(p);
+          opt.textContent = p.name;
+          presetSel.append(opt);
+        }
+        presetSel.selectedIndex = 0;
+        applyPreset();
+      }
+      function applyPreset() {
+        try {
+          const p = JSON.parse(presetSel.value);
+          baseUrl.value = p.baseUrl || '';
+          route.value   = p.route || '';
+          stream.checked = !!p.stream;
+          apiKey.placeholder = p.needsKey ? 'API Key required' : '(none)';
+        } catch (e) {
+          console.error('Invalid preset JSON', e);
+        }
+      }
+      providerSel.addEventListener('change', populatePresets);
+      presetSel.addEventListener('change', applyPreset);
+      populatePresets();
+
+      // Expose streaming callbacks
+      window.BenchUI = {
+        notifyTTFT: ms => { ttftEl.textContent = ms + ' ms'; },
+        appendToken: t => { out.textContent += t; }
+      };
+
+      // Run benchmark
+      runBtn.addEventListener('click', async () => {
+        out.textContent = '';
+        ttftEl.textContent = '-';
+        tokEl.textContent = '-';
+        tpsEl.textContent = '-';
+        totalEl.textContent = '-';
+
+        try {
+          const cfg = {
+            providerKey: providerSel.value,
+            baseUrl: baseUrl.value,
+            route: route.value,
+            apiKey: apiKey.value,
+            model: model.value,
+            sysPrompt: sysPrompt.value,
+            userText: userPrompt.value,
+            stream: stream.checked
+          };
+          const res = await Bench.runOnce(cfg);
+
+          // Show metrics
+          ttftEl.textContent = res.ttftMs ?? 'n/a';
+          tokEl.textContent = res.tokenLikeCount;
+          tpsEl.textContent = res.tokensPerSec ?? 'n/a';
+          totalEl.textContent = res.totalMs;
+
+          // Compute & display hash
+          const promptData = JSON.stringify({
+            model: cfg.model,
+            sysPrompt: cfg.sysPrompt,
+            userPrompt: cfg.userText
+          });
+          const hash = await sha256Hex(promptData);
+          out.textContent = `Prompt SHA-256: ${hash}\n\n` + out.textContent;
+
+          // Store for export
+          window.lastBenchResult = res;
+          window.lastBenchResult.promptHash = hash;
+        } catch (err) {
+          out.textContent = 'ERROR: ' + err.message;
+        }
+      });
+
+      // Export & ping
+      $('#exportJson').addEventListener('click', Bench.exportJSON);
+      $('#exportCsv').addEventListener('click', Bench.exportCSV);
+      pingBtn.addEventListener('click', async () => {
+        pingEl.textContent = '…';
+        const r = await Bench.ping(baseUrl.value);
+        pingEl.textContent = r.ok ? `${r.ms} ms` : `fail (${r.ms} ms)`;
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <!-- EULA Modal (first in the body) -->
+  <div id="eulaBackdrop">
+    <div id="eulaModal">
+      <h2>End-User License Agreement</h2>
+      <p>You must accept this EULA before running benchmarks. Your prompts and latencies remain local.</p>
+      <button id="acceptEula">I Accept</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <img class="logo" src="./assets/deus-ex-logo-badge.jpg" alt="DX Badge" />
+    <div>
+      <div class="title">Deus Ex Bench <span class="badge">Alpha v0.1</span></div>
+      <div class="subtitle">Local AI latency metrics (TTFT, tokens/s, total) • SHA-256 integrity</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="card">
+      <div class="grid">
+        <div>
+          <label>Provider</label>
+          <select id="provider">
+            <option value="openai">OpenAI-compatible</option>
+            <option value="llamacpp_native">llama.cpp native</option>
+          </select>
+        </div>
+        <div>
+          <label>Preset</label>
+          <select id="preset"></select>
+        </div>
+
+        <div>
+          <label>Base URL</label>
+          <input id="baseUrl" type="text" placeholder="http://127.0.0.1:8000" />
+        </div>
+        <div>
+          <label>Route</label>
+          <input id="route" type="text" placeholder="/v1/chat/completions" />
+        </div>
+
+        <div>
+          <label>API Key</label>
+          <input id="apiKey" type="password" placeholder="(none)" />
+        </div>
+        <div>
+          <label>Model</label>
+          <input id="model" type="text" placeholder="gpt-4o-mini or llama model name" />
+        </div>
+
+        <div class="span2">
+          <label>System Prompt</label>
+          <textarea id="sysPrompt">You are a helpful assistant.</textarea>
+        </div>
+        <div class="span2">
+          <label>User Prompt</label>
+          <textarea id="userPrompt">Say hello and identify the model and provider.</textarea>
+        </div>
+
+        <div class="span2 row">
+          <label><input id="stream" type="checkbox" checked /> Stream</label>
+          <button id="run">Run Benchmark</button>
+          <button class="alt" id="exportJson">Export JSON</button>
+          <button class="alt" id="exportCsv">Export CSV</button>
+          <button class="alt" id="ping">Ping</button>
+          <span class="small">Ping: <strong id="pingMs">-</strong></span>
+        </div>
+
+        <div class="span2">
+          <div class="output" id="output"></div>
+        </div>
+
+        <div class="span2 row">
+          <div>TTFT: <strong id="ttft">-</strong></div>
+          <div>Tokens: <strong id="tok">-</strong></div>
+          <div>Tokens/s: <strong id="tps">-</strong></div>
+          <div>Total: <strong id="total">-</strong> ms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Reset EULA link -->
+  <div class="footer">
+    <div>
+      © 2025 Deus Ex Projects Group • EULA Licensed • Private Use Only • Commercial licensing via GitHub/LinkedIn
+      <a href="#" onclick="localStorage.removeItem('dex:eulaAccepted');location.reload();">Reset EULA</a>
+    </div>
+    <div>
+      <a href="https://github.com/DeusEx-Projects-Group?tab=repositories" target="_blank">POST YOUR RESULTS HERE</a>
+      <a href="https://linkedin.com/in/james-a-695a39104" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</body>
+</html>

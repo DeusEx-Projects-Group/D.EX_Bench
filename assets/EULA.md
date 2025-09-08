@@ -1,0 +1,40 @@
+Deus Ex — End User License Agreement (EULA)
+Version 1.0 — 2025-09-06
+
+IMPORTANT: READ CAREFULLY. By using, copying, or distributing any part of this software (“Deus Ex”), you agree to the terms below. If you do not agree, do not use the software.
+
+1. License Grant (Personal, Non-Commercial).
+   You are granted a revocable, non-exclusive, non-transferable, limited license to use Deus Ex
+   for personal, non-commercial purposes on devices you own or control.
+
+2. Prohibited Uses.
+   You may NOT:
+     a) sell, rent, lease, sublicense, or otherwise commercialize Deus Ex or derivative works;
+     b) distribute, publish, or make available the software or any bundled assets (including images, logos,
+        or branding) without prior written permission from the copyright holder;
+     c) remove, disable, or alter any notices, disclaimers, or the EULA gate;
+     d) misrepresent benchmark results or remove the EULA hash stamp from exported metrics.
+
+3. Benchmark Integrity.
+   Exported metrics may include an EULA hash stamp (SHA-256 of this text). Removing or modifying the stamp,
+   or submitting metrics that omit it, constitutes a violation of this EULA.
+
+4. Ownership.
+   Deus Ex is licensed, not sold. All rights not expressly granted are reserved.
+
+5. No Warranty.
+   The software is provided “AS IS” without warranty of any kind, express or implied.
+
+6. Limitation of Liability.
+   In no event shall the authors or copyright holders be liable for any claim, damages, or other liability,
+   whether in an action of contract, tort, or otherwise, arising from or in connection with the software
+   or the use or other dealings in the software.
+
+7. Termination.
+   This EULA is effective until terminated. Any breach terminates your rights immediately. Upon termination,
+   you must cease all use and destroy any copies.
+
+8. Governing Law.
+   This EULA shall be governed by the laws of the author’s jurisdiction unless otherwise required by local law.
+
+© 2025 Deus Ex Projects Group. All rights reserved.

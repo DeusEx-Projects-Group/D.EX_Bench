@@ -1,0 +1,81 @@
+/* All styles are namespaced to avoid collisions with your page */
+.dex-eula-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;               /* only shown if consent needed */
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.75);
+  z-index: 2147483647;         /* sit above everything */
+}
+
+.dex-eula-card {
+  width: min(900px, 92vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: #0d1117;
+  border: 1px solid #2b3a3f;
+  border-radius: 16px;
+  box-shadow: 0 12px 50px rgba(0,0,0,0.5);
+  overflow: hidden;
+  color: #e6f1ef;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial;
+}
+
+.dex-eula-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #2b3a3f;
+  background: #0d1117;
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+
+.dex-eula-body {
+  padding: 14px 16px;
+  overflow: auto;
+}
+
+.dex-eula-pre {
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #cfe3df;
+  background: #0a1013;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px dashed #24363d;
+  margin: 10px 0 0 0;
+}
+
+.dex-eula-hash {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9fb1ad;
+}
+
+.dex-eula-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid #2b3a3f;
+  background: #0d1117;
+}
+
+.dex-eula-btn {
+  appearance: none;
+  border: 1px solid #2c444b;
+  background: #0f141a;
+  color: #e6f1ef;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dex-eula-btn:hover { filter: brightness(1.08); }
+.dex-eula-btn.primary {
+  border-color: #1ecad3;
+  box-shadow: 0 0 0 1px inset rgba(30,202,211,.25);
+}
