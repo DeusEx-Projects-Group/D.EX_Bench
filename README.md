@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Deus Ex Bench (Alpha) (Standalone HTML)
 
 Self-contained benchmark UI for OpenAI and OpenAI-compatible servers (e.g., llama.cpp `/v1`).
@@ -21,3 +22,7 @@ A lightweight, portable page for transparent local AI benchmarking:
 > CORS: Cloud APIs may block browser calls. If so, run your existing PowerShell CORS proxy or serve this page from the same origin as the API.
 
 © 2025 Deus Ex Projects Group. All rights reserved.
+=======
+# D.EX_Bench
+D.EX Bench - OpenAi TTFT Testing Platform
+>>>>>>> 52565d731cd15efcfa654b03d7801234bf7d57c8
